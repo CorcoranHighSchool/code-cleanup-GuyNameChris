@@ -1,21 +1,24 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
     private Rigidbody playerRb;
-    public float speed = 5.0f;
+    [SerializeField] private float speed = 5.0f;
     public GameObject focalPoint;
-    public bool hasPowerup;
+    [SerializeField] private bool hasPowerup;
     private float powerUpStrength = 15.0f;
-    public GameObject powerupIndicator;
-
+    [SerializeField] private GameObject powerupIndicator;
+    private const string focalPoint = "Focal Point";
+    private const string vertical = "Vertical";
+    private const string powerup = "Powerup";
+    private const string enemy = "Enemy";
+    private const string collidedwith = "Collided with ";
+    private const string withpowerupsetto = "with powerup set to ";
     // Start is called before the first frame update
     void Start()
     {
         playerRb = GetComponent<Rigidbody>();
-        focalPoint = GameObject.Find("Focal Point");
+        focalPoint = GameObject.Find(focalPoint);
     }
 
     // Update is called once per frame
@@ -28,7 +31,7 @@ public class PlayerController : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Powerup"))
+        if (other.CompareTag(powerup))
         {
             powerupIndicator.SetActive(true);   //
             hasPowerup = true;
@@ -46,13 +49,13 @@ public class PlayerController : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-        if (collision.gameObject.CompareTag("Enemy") && hasPowerup)
+        if (collision.gameObject.CompareTag(enemy) && hasPowerup)
         {
             Rigidbody enemyRigidbody = collision.gameObject.GetComponent<Rigidbody>();
             Vector3 awayfromPlayer = (collision.gameObject.transform.position - transform.position);
 
-            Debug.Log("Collided with " + collision.gameObject.name +
-                "with powerup set to " + hasPowerup);
+            Debug.Log(collidedwith + collision.gameObject.name +
+                withpowerupsetto + hasPowerup);
             enemyRigidbody.AddForce(awayfromPlayer * powerUpStrength, ForceMode.Impulse);
         }
     }
